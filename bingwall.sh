@@ -1,7 +1,7 @@
 #!/bin/bash
 # Downloads the Bing wallpaper and keeps a running archive
 
-# Check if jq is installed
+# jq is required for JSON processing, so check if installed
 which jq &> /dev/null
 if test "$?" -eq 1; then
     echo "bingwall.sh needs the commandline JSON processor jq ... exiting"
@@ -47,7 +47,9 @@ fi
 imgurl=https://www.bing.com$(echo $json | jq -r '.images[0].url')
 
 # Check if imgurl is different from the currently downloaded one
-logdebug "oldurl: $(cat $oldurl)"
+if test -e "$oldurl"; then
+    logdebug "oldurl: $(cat $oldurl)"
+fi
 logdebug "imgurl: $imgurl"
 if test -e "$oldurl"; then
     if test "$(cat $oldurl)" == "$imgurl"; then 
@@ -97,6 +99,7 @@ if test ! -e "$outfile"; then
     if test ! -e "$archivefile"; then
         /bin/cp -f $v $downloaded $archivefile
     fi
+    logverbose "New bing wallpaper downloaded"
     echo "$imgurl" > $oldurl
 else
     # Another check on new wallpaper
