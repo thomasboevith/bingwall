@@ -38,7 +38,7 @@ function logverbose {
 # Get Bing wallpaper url and metadata
 bingurl="https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1"
 json=$(wget -t 5 --no-check-certificate $v $q -O- $bingurl)
-echo $json | grep -q enddate
+echo $json | grep -q startdate
 if test "$?" -eq 1; then
     echo "Failure downloading bingurl: $bingurl ... exiting"
     exit 1
@@ -69,7 +69,6 @@ fi
 
 # Extract metadata
 startdate=$(echo $json | jq -r '.images[0].startdate')
-enddate=$(echo $json | jq -r '.images[0].enddate')
 title=$(echo $json | jq -r '.images[0].title')
 copyright=$(echo $json | jq -r '.images[0].copyright')
 
@@ -82,7 +81,6 @@ fi
 logverbose "Bing wallpaper metadata:"
 logverbose "imgurl=$imgurl"
 logverbose "startdate=$startdate"
-logverbose "enddate=$enddate"
 logverbose "title=$title"
 logverbose "copyright=$copyright"
 logverbose "downloaded=$downloaded"
