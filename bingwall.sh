@@ -52,10 +52,12 @@ if test -e "$oldurl"; then
 fi
 logdebug "imgurl: $imgurl"
 if test -e "$oldurl"; then
-    if test "$(cat $oldurl)" == "$imgurl"; then 
+    if test "$(cat $oldurl)" == "$imgurl"; then
+        logdebug "Previous imgage url: $oldurl is similar to current image url: $imgurl"
         logverbose "No new wallpaper is available ... exiting"
         exit 1
     else
+        logdebug "Previous imgage url: $oldurl is diffent from current image url: $imgurl"
         logverbose "New wallpaper is available"
     fi
 fi
@@ -103,16 +105,18 @@ if test ! -e "$outfile"; then
     echo "$imgurl" > $oldurl
 else
     # Another check on new wallpaper
-    cmp --silent $downloaded $outfile  # Returns code 0 at first byte difference
-    if test "$?" -eq 0; then
+    cmp --silent $downloaded $outfile  # Returns code 1 at first byte difference
+    if test "$?" -eq 1; then
         /bin/cp -f $v $downloaded $outfile
         /bin/cp -f $v $downloaded $archivefile
+        logdebug "Downloaded file: $downloaded and outfile: $outfile are different"
         logverbose "New bing wallpaper downloaded"
         echo "$imgurl" > $oldurl
     else
         if test ! -e "$oldurl"; then
             echo "$imgurl" > $oldurl
         fi
+        logdebug "Downloaded file: $downloaded and outfile: $outfile are similar"
         logverbose "No new wallpaper available ... exiting"
         exit 1
     fi
