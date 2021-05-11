@@ -13,7 +13,7 @@ oldurl=~/tmp/bingwall_oldurl.txt
 downloaded=~/tmp/bingwall_downloaded.jpg
 archivefileprefix=~/Pictures/bingwall_
 
-debug=0
+debug=1
 verbose=1
 
 if test $debug -eq 1; then
@@ -77,7 +77,7 @@ title=$(echo $json | jq -r '.images[0].title')
 copyright=$(echo $json | jq -r '.images[0].copyright')
 
 # Sometimes title field is empty and the title info is in copyright field
-if test ! -n "$title"; then
+if ( (test ! -n "$title") || (test "$title" == "Info") ); then
   title=$copyright
 fi
 
